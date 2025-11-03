@@ -74,8 +74,6 @@ tarea/
 
 ### Pasos de Instalación
 
-Ver documentación detallada en: [docs](Instalación de Oracle 11g y conexion.docx)
-
 1. Descargar e instalar Oracle 11g XE
 2. Configurar contraseña de administrador (recomendado: SYSTEM o ORACLE)
 3. Verificar que el servicio OracleServiceXE esté activo
