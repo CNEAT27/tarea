@@ -60,7 +60,7 @@ tarea/
 
 ### Diagrama Entidad-Relación
 
-![Diagrama ER](diagrams/diagrama_er.png)
+![Diagrama ER](diagrams/Imagen1.png)
 
 ## Instalación y Configuración
 
