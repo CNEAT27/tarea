@@ -74,7 +74,7 @@ tarea/
 
 ### Pasos de Instalación
 
-Ver documentación detallada en: [docs/instalacion.md](docs/instalacion.md)
+Ver documentación detallada en: [docs](Instalación de Oracle 11g y conexion.docx)
 
 1. Descargar e instalar Oracle 11g XE
 2. Configurar contraseña de administrador (recomendado: SYSTEM o ORACLE)
@@ -167,10 +167,6 @@ lsnrctl status
 lsnrctl start
 ```
 
-## Documentación Adicional
-
-- [Guía de Instalación Completa](docs/instalacion.md)
-- [Configuración de Conexiones](docs/conexion.md)
 
 ## Funcionalidades Implementadas
 
