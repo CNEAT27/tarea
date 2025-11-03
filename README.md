@@ -131,17 +131,18 @@ java -cp "app/lib/ojdbc8.jar:app" ConexionRestaurante
 
 ## Capturas de Pantalla
 
-### Instalación de Oracle 11g
-
-![Instalación](docs/screenshots/instalacion.png)
 
 ### Conexión SQL*Plus
 
-![SQL*Plus](docs/screenshots/sqlplus.png)
+![SQL*Plus](docs/screenshots/Imagen5.png)
+![SQL*Plus](docs/screenshots/Imagen6.png)
+
 
 ### Aplicación Java Funcionando
 
-![Resultado Java](docs/screenshots/java_resultado.png)
+![Resultado Java](docs/screenshots/Imagen3.png)
+![Resultado Java](docs/screenshots/Imagen4.png)
+
 
 ## Solución de Problemas
 
@@ -183,8 +184,6 @@ lsnrctl start
 - Consultas SQL funcionales
 
 ## Coordinador del Repositorio
-
-Carlos Andia - Organización y documentación del proyecto GitHub
 
 ---
 
