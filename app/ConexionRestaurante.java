@@ -1,104 +1,86 @@
-package Proyecto_BD;
+package ProyectoBD;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.util.Scanner;
 
 public class ConexionRestaurante {
     public static void main(String[] args) {
-        String URL = "jdbc:oracle:thin:@localhost:1521:XE";
-        String USER = "system";
-        String PASS = "ORACLE";
+        Scanner sc = new Scanner(System.in);
+        ClienteDAO clienteDAO = new ClienteDAO();
 
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASS);
-             Statement stmt = conn.createStatement()) {
+        int opcion;
 
-            System.out.println("Conexión exitosa a la base de datos 'proyecto_restaurante'\n");
+        do {
+            System.out.println("\n===================================");
+            System.out.println("   MENU DE CLIENTES - RESTAURANTE");
+            System.out.println("===================================");
+            System.out.println("1. Agregar cliente");
+            System.out.println("2. Modificar cliente");
+            System.out.println("3. Mostrar clientes");
+            System.out.println("4. Eliminar cliente");
+            System.out.println("5. Salir");
+            System.out.print("Seleccione una opcion: ");
+            opcion = sc.nextInt();
+            sc.nextLine();
 
-            // Mostrar CLIENTE
-            System.out.println("Tabla: CLIENTE");
-            System.out.println("-------------------------------------------------------------");
-            System.out.printf("| %-10s | %-30s | %-10s |\n", "COD_CLIENTE", "NOMBRE", "TELEFONO");
-            System.out.println("-------------------------------------------------------------");
+            switch (opcion) {
+                case 1 -> {
+                    System.out.println("\n--- AGREGAR CLIENTE ---");
+                    System.out.print("Codigo del cliente: ");
+                    int cod = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Nombre: ");
+                    String nombre = sc.nextLine();
+                    System.out.print("Telefono: ");
+                    int telefono = sc.nextInt();
 
-            ResultSet rs = stmt.executeQuery("SELECT * FROM CLIENTE ORDER BY COD_CLIENTE");
-            while (rs.next()) {
-                System.out.printf("| %-10d | %-30s | %-10d |\n",
-                        rs.getInt("COD_CLIENTE"),
-                        rs.getString("NOMBRE"),
-                        rs.getInt("TELEFONO"));
+                    clienteDAO.insertarCliente(cod, nombre, telefono);
+                }
+
+                case 2 -> {
+                    System.out.println("\n--- ACTUALIZAR CLIENTE ---");
+                    System.out.print("Codigo del cliente: ");
+                    int cod = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Nuevo nombre: ");
+                    String nuevoNombre = sc.nextLine();
+
+                    clienteDAO.actualizarCliente(cod, nuevoNombre);
+                }
+
+                case 3 -> {
+                    System.out.println("\n--- LISTA DE CLIENTES ---");
+                    clienteDAO.mostrarClientes();
+                }
+
+                case 4 -> {
+                    System.out.println("\n--- ELIMINAR CLIENTE ---");
+                    System.out.print("Codigo del cliente: ");
+                    int cod = sc.nextInt();
+                    sc.nextLine();
+                    clienteDAO.eliminarCliente(cod);
+                }
+
+                case 5 -> System.out.println("\nSaliendo del sistema...");
+
+                default -> System.out.println("\nOpcion no valida. Intente nuevamente.");
             }
-            System.out.println("------------------------------------------------------------\n");
 
-            // Mostrar PLATO
-            System.out.println("Tabla: PLATO");
-            System.out.println("------------------------------------------------------------");
-            System.out.printf("| %-10s | %-30s | %-10s |\n", "COD_PLATO", "NOMBRE", "PRECIO");
-            System.out.println("------------------------------------------------------------");
+        } while (opcion != 5);
 
-            rs = stmt.executeQuery("SELECT * FROM PLATO ORDER BY COD_PLATO");
-            while (rs.next()) {
-                System.out.printf("| %-10s | %-30s | %-10.2f |\n",
-                        rs.getString("COD_PLATO"),
-                        rs.getString("NOMBRE"),
-                        rs.getDouble("PRECIO"));
-            }
-            System.out.println("------------------------------------------------------------\n");
-
-            // Mostrar MESA
-            System.out.println("Tabla: MESA");
-            System.out.println("-----------------------------------------------------------------");
-            System.out.printf("| %-10s | %-12s | %-10s | %-20s |\n", "COD_MESA", "NUMERO_MESA", "CAPACIDAD", "ESTADO");
-            System.out.println("-----------------------------------------------------------------");
-
-            rs = stmt.executeQuery("SELECT * FROM MESA ORDER BY COD_MESA");
-            while (rs.next()) {
-                System.out.printf("| %-10d | %-12d | %-10d | %-20s |\n",
-                        rs.getInt("COD_MESA"),
-                        rs.getInt("NUMERO_MESA"),
-                        rs.getInt("CAPACIDAD"),
-                        rs.getString("ESTADO"));
-            }
-            System.out.println("-----------------------------------------------------------------\n");
-
-            // Mostrar PEDIDO
-            System.out.println("Tabla: PEDIDO");
-            System.out.println("------------------------------------------------------------");
-            System.out.printf("| %-10s | %-15s | %-12s | %-10s |\n", "COD_PEDIDO", "FECHA_PEDIDO", "COD_CLIENTE", "COD_MESA");
-            System.out.println("------------------------------------------------------------");
-
-            rs = stmt.executeQuery("SELECT * FROM PEDIDO ORDER BY COD_PEDIDO");
-            while (rs.next()) {
-                System.out.printf("| %-10d | %-15s | %-12d | %-10d |\n",
-                        rs.getInt("COD_PEDIDO"),
-                        rs.getDate("FECHA_PEDIDO"),
-                        rs.getInt("COD_CLIENTE"),
-                        rs.getInt("COD_MESA"));
-            }
-            System.out.println("------------------------------------------------------------\n");
-
-            // Mostrar DETALLE_PEDIDO
-            System.out.println("Tabla: DETALLE_PEDIDO");
-            System.out.println("----------------------------------------");
-            System.out.printf("| %-10s | %-10s | %-10s |\n", "COD_PEDIDO", "COD_PLATO", "CANTIDAD");
-            System.out.println("----------------------------------------");
-
-            rs = stmt.executeQuery("SELECT * FROM DETALLE_PEDIDO ORDER BY COD_PEDIDO");
-            while (rs.next()) {
-                System.out.printf("| %-10d | %-10s | %-10d |\n",
-                        rs.getInt("COD_PEDIDO"),
-                        rs.getString("COD_PLATO"),
-                        rs.getInt("CANTIDAD"));
-            }
-            System.out.println("----------------------------------------\n");
-
-            rs.close();
-            System.out.println("Datos mostrados correctamente.\n");
-
-        } catch (Exception e) {
-            System.out.println("Error SQL: " + e.getMessage());
-            e.printStackTrace();
-        }
+        sc.close();
     }
 }
+```
+
+4. Guarda (Ctrl + S)
+
+---
+
+## Al final deberías tener en la carpeta `app`:
+```
+app/
+├── Conexion.java          ← Ya lo tienes
+├── ClienteDAO.java        ← Crear este
+├── ConexionRestaurante.java  ← Crear este
+└── lib/
+    └── ojdbc8.jar
