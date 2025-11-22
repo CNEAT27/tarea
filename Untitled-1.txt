@@ -1,0 +1,159 @@
+-- ============================================
+-- PASO 1: ELIMINAR TABLAS SI EXISTEN (OPCIONAL)
+-- ============================================
+DROP SEQUENCE seq_pago_medico;
+DROP SEQUENCE seq_cita;
+DROP SEQUENCE seq_personal_callcenter;
+DROP SEQUENCE seq_medico;
+DROP SEQUENCE seq_especialidad;
+DROP SEQUENCE seq_tipo_pago;
+DROP SEQUENCE seq_paciente;
+
+DROP TABLE PAGO_MEDICO CASCADE CONSTRAINTS;
+DROP TABLE CITA CASCADE CONSTRAINTS;
+DROP TABLE PERSONAL_CALL_CENTER CASCADE CONSTRAINTS;
+DROP TABLE MEDICO CASCADE CONSTRAINTS;
+DROP TABLE ESPECIALIDAD CASCADE CONSTRAINTS;
+DROP TABLE TIPO_PAGO CASCADE CONSTRAINTS;
+DROP TABLE PACIENTE CASCADE CONSTRAINTS;
+
+-- ============================================
+-- PASO 2: CREAR TABLAS
+-- ============================================
+
+-- TABLA PACIENTE
+CREATE TABLE PACIENTE (
+    ID_Paciente NUMBER PRIMARY KEY,
+    Nombre VARCHAR2(50),
+    Apellido VARCHAR2(50),
+    DNI VARCHAR2(10) UNIQUE,
+    Telefono VARCHAR2(15),
+    Email VARCHAR2(80),
+    Direccion VARCHAR2(40)
+);
+
+-- TABLA TIPO PAGO
+CREATE TABLE TIPO_PAGO (
+    ID_Tipo_Pago NUMBER PRIMARY KEY,
+    Descripcion VARCHAR2(50),
+    Monto NUMBER(6,2)
+);
+
+-- TABLA ESPECIALIDAD
+CREATE TABLE ESPECIALIDAD (
+    ID_Especialidad NUMBER PRIMARY KEY,
+    Nombre_Especialidad VARCHAR2(50),
+    Descripcion VARCHAR2(30),
+    Dias_Atencion VARCHAR2(30)
+);
+
+-- TABLA MEDICO
+CREATE TABLE MEDICO (
+    ID_Medico NUMBER PRIMARY KEY,
+    Nombre VARCHAR2(50),
+    Apellido VARCHAR2(50),
+    DNI VARCHAR2(10) UNIQUE,
+    Telefono VARCHAR2(9),
+    Email VARCHAR2(50),
+    Horario_Atencion VARCHAR2(20),
+    ID_Especialidad NUMBER,
+    CONSTRAINT fk_medico_especialidad FOREIGN KEY (ID_Especialidad)
+        REFERENCES ESPECIALIDAD(ID_Especialidad)
+);
+
+-- TABLA PERSONAL CALL CENTER
+CREATE TABLE PERSONAL_CALL_CENTER (
+    ID_Personal NUMBER PRIMARY KEY,
+    Nombre VARCHAR2(50),
+    Apellido VARCHAR2(50),
+    DNI NUMBER(10),
+    Turno VARCHAR2(20)
+);
+
+-- TABLA CITA
+CREATE TABLE CITA (
+    ID_Cita NUMBER PRIMARY KEY,
+    Fecha DATE,
+    Hora_Inicio VARCHAR2(10),
+    Hora_Fin VARCHAR2(10),
+    Estado VARCHAR2(20), -- pendiente, atendida, cancelada
+    Monto_Cobrado NUMBER(6,2),
+    ID_Paciente NUMBER,
+    ID_Medico NUMBER,
+    ID_Tipo_Pago NUMBER,
+    ID_Personal NUMBER,
+    CONSTRAINT fk_cita_paciente FOREIGN KEY (ID_Paciente)
+        REFERENCES PACIENTE(ID_Paciente),
+    CONSTRAINT fk_cita_medico FOREIGN KEY (ID_Medico)
+        REFERENCES MEDICO(ID_Medico),
+    CONSTRAINT fk_cita_tipopago FOREIGN KEY (ID_Tipo_Pago)
+        REFERENCES TIPO_PAGO(ID_Tipo_Pago),
+    CONSTRAINT fk_cita_personal FOREIGN KEY (ID_Personal)
+        REFERENCES PERSONAL_CALL_CENTER(ID_Personal)
+);
+
+-- TABLA PAGO MEDICO
+CREATE TABLE PAGO_MEDICO (
+    ID_Pago NUMBER PRIMARY KEY,
+    Mes VARCHAR2(15),
+    Año NUMBER(4),
+    Total_Citas NUMBER,
+    Monto_Total NUMBER(10,2),
+    Fecha_Pago DATE,
+    Estado VARCHAR2(20),
+    ID_Medico NUMBER,
+    CONSTRAINT fk_pago_medico FOREIGN KEY (ID_Medico)
+        REFERENCES MEDICO(ID_Medico)
+);
+
+-- SECUENCIAS PARA CLAVES PRIMARIAS
+CREATE SEQUENCE seq_paciente START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_tipo_pago START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_especialidad START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_medico START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_cita START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_personal_callcenter START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_pago_medico START WITH 1 INCREMENT BY 1;
+
+-- ============================================
+-- PASO 3: INSERTAR DATOS
+-- ============================================
+
+-- DATOS DE PACIENTE
+INSERT INTO PACIENTE VALUES (seq_paciente.NEXTVAL, 'Carlos', 'Andia', '61179862', '995680139', 'carlos.andia@tecsup.edu.pe', 'Av. Principal 123');
+
+-- DATOS DE ESPECIALIDAD 
+INSERT INTO ESPECIALIDAD VALUES (seq_especialidad.NEXTVAL, 'Cardiología', 'Consulta Externa', 'Lunes a Viernes');
+INSERT INTO ESPECIALIDAD VALUES (seq_especialidad.NEXTVAL, 'Pediatría', 'Consulta Externa', 'Martes a Sábado');
+INSERT INTO ESPECIALIDAD VALUES (seq_especialidad.NEXTVAL, 'Dermatología', 'Consulta Externa', 'Lunes a Viernes');
+
+-- DATOS MEDICO
+INSERT INTO MEDICO VALUES (seq_medico.NEXTVAL, 'Michael', 'Fernandez', '65482342', '987654321', 'michael.fernandez@hospital.com', '12:00-20:00', 1);
+INSERT INTO MEDICO VALUES (seq_medico.NEXTVAL, 'Jhon', 'Malpartida', '26835686', '987654322', 'jhon.malpartida@hospital.com', '12:00-20:00', 2);
+
+-- DATOS TIPO_PAGO
+INSERT INTO TIPO_PAGO VALUES (seq_tipo_pago.NEXTVAL, 'Seguro Médico', 50.00);
+INSERT INTO TIPO_PAGO VALUES (seq_tipo_pago.NEXTVAL, 'Particular', 80.00);
+
+-- DATOS PERSONAL CALL CENTER
+INSERT INTO PERSONAL_CALL_CENTER VALUES (seq_personal_callcenter.NEXTVAL, 'María', 'García', 72345678, 'Mañana');
+INSERT INTO PERSONAL_CALL_CENTER VALUES (seq_personal_callcenter.NEXTVAL, 'José', 'Rodríguez', 73456789, 'Tarde');
+
+-- DATOS DE CITA
+INSERT INTO CITA VALUES (seq_cita.NEXTVAL, TO_DATE('2025-11-07','YYYY-MM-DD'), '12:00', '12:30', 'Pendiente', 50.00, 1, 1, 1, 1);
+
+-- REGISTRO DE PAGO_MEDICO 
+INSERT INTO PAGO_MEDICO VALUES (seq_pago_medico.NEXTVAL, 'Noviembre', 2025, 5, 100.00, TO_DATE('2025-11-05','YYYY-MM-DD'), 'Pendiente', 1);
+
+-- ============================================
+-- PASO 4: VERIFICAR DATOS
+-- ============================================
+
+-- CONSULTAS DE PRUEBA
+SELECT * FROM PACIENTE;
+SELECT * FROM ESPECIALIDAD;
+SELECT * FROM MEDICO;
+SELECT * FROM TIPO_PAGO;
+SELECT * FROM PERSONAL_CALL_CENTER;
+SELECT * FROM CITA;
+SELECT * FROM PAGO_MEDICO;
