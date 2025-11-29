@@ -18,11 +18,14 @@ public class ConexionRestaurante {
             System.out.println("3. Mostrar clientes");
             System.out.println("4. Eliminar cliente");
             System.out.println("5. Salir");
+            System.out.println("6. Ver historial de clientes");
+            System.out.println("7. Ver pedidos (vista)");
             System.out.print("Seleccione una opcion: ");
             opcion = sc.nextInt();
             sc.nextLine();
 
             switch (opcion) {
+
                 case 1 -> {
                     System.out.println("\n--- AGREGAR CLIENTE ---");
                     System.out.print("Codigo del cliente: ");
@@ -60,9 +63,24 @@ public class ConexionRestaurante {
                     clienteDAO.eliminarCliente(cod);
                 }
 
-                case 5 -> System.out.println("\nSaliendo del sistema...");
+                case 5 -> {
+                    System.out.println("\nSaliendo del sistema...");
+                }
 
-                default -> System.out.println("\nOpcion no valida. Intente nuevamente.");
+                case 6 -> {
+                    System.out.println("\n--- HISTORIAL DE CLIENTES (Trigger) ---");
+                    clienteDAO.mostrarHistorialClientes();
+                }
+
+                case 7 -> {
+                    System.out.println("\n--- VISTA DE PEDIDOS COMPLETOS ---");
+                    clienteDAO.mostrarVistaPedidos();
+                }
+
+                default -> {
+                    if (opcion != 5)
+                        System.out.println("\nOpcion no valida. Intente nuevamente.");
+                }
             }
 
         } while (opcion != 5);
@@ -70,17 +88,3 @@ public class ConexionRestaurante {
         sc.close();
     }
 }
-```
-
-4. Guarda (Ctrl + S)
-
----
-
-## Al final deberías tener en la carpeta `app`:
-```
-app/
-├── Conexion.java          ← Ya lo tienes
-├── ClienteDAO.java        ← Crear este
-├── ConexionRestaurante.java  ← Crear este
-└── lib/
-    └── ojdbc8.jar

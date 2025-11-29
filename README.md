@@ -12,13 +12,15 @@ Base de datos para administración de restaurante implementada en Oracle 11g con
 
 Sistema de base de datos diseñado para gestionar las operaciones de un restaurante, incluyendo:
 
-- **Gestión de Clientes**: Registro y control de información de clientes con operaciones CRUD completas
+- **Gestión de Clientes**: Registro y control con operaciones CRUD completas mediante procedimientos almacenados
 - **Control de Mesas**: Administración de mesas con capacidad y estados
 - **Registro de Pedidos**: Sistema de pedidos vinculado a clientes y mesas
 - **Catálogo de Platos**: Menú con precios y detalles
 - **Detalle de Pedidos**: Relación entre pedidos y platos solicitados
 - **Validaciones**: Constraints para garantizar integridad de datos
 - **Optimización**: Índices para mejorar rendimiento de consultas
+- **Auditoría**: Trigger para registrar historial de cambios automáticamente
+- **Reportes**: Vistas para consultas complejas simplificadas
 
 ## Tecnologías Utilizadas
 
@@ -39,16 +41,18 @@ tarea/
 │   └── screenshots/      # Capturas de pantalla
 ├── database/             # Scripts SQL
 │   ├── schema.sql        # Limpieza de tablas
-│   ├── tablas.sql        # Creación de tablas con constraints e índices
+│   ├── tablas.sql        # Tablas, constraints, índices, procedimientos, triggers y vistas
 │   ├── datos.sql         # Datos de ejemplo
 │   └── consultas.sql     # Consultas de prueba
 ├── diagrams/             # Diagramas
 │   ├── Imagen1.png       # Diagrama Entidad-Relación parte 1
 │   └── Imagen2.png       # Diagrama Entidad-Relación parte 2
 └── app/                  # Aplicación Java
-    ├── Conexion.java          # Clase de conexión a BD
-    ├── ClienteDAO.java        # Operaciones CRUD de clientes
-    ├── ConexionRestaurante.java  # Clase principal con menú
+    ├── src/
+    │   └── ProyectoBD/
+    │       ├── Conexion.java          # Clase de conexión a BD
+    │       ├── ClienteDAO.java        # Operaciones CRUD con procedimientos
+    │       └── ConexionRestaurante.java  # Clase principal con menú
     └── lib/
         └── ojdbc8.jar    # Driver JDBC
 ```
@@ -62,6 +66,7 @@ tarea/
 3. **PLATO** - Menú de platos con precios
 4. **PEDIDO** - Pedidos realizados por clientes
 5. **DETALLE_PEDIDO** - Items específicos de cada pedido
+6. **HISTORIAL_CLIENTE** - Auditoría de cambios (generada por trigger)
 
 ### Diagrama Entidad-Relación
 
@@ -114,8 +119,8 @@ sqlplus system/tu_contraseña @database/consultas.sql
 La aplicación está estructurada en 3 clases para mejor organización:
 
 - **Conexion.java**: Maneja la conexión a la base de datos
-- **ClienteDAO.java**: Implementa operaciones CRUD (Crear, Leer, Actualizar, Eliminar)
-- **ConexionRestaurante.java**: Clase principal con menú interactivo
+- **ClienteDAO.java**: Implementa operaciones CRUD usando procedimientos almacenados y consultas a vistas
+- **ConexionRestaurante.java**: Clase principal con menú interactivo de 7 opciones
 
 ### Configuración
 
@@ -123,49 +128,94 @@ El driver JDBC (ojdbc8.jar) está incluido en `app/lib/`
 
 ### Compilar
 ```bash
-javac -cp "app/lib/ojdbc8.jar" app/Conexion.java
-javac -cp "app/lib/ojdbc8.jar" app/ClienteDAO.java
-javac -cp "app/lib/ojdbc8.jar" app/ConexionRestaurante.java
+cd app/src
+javac -cp "../lib/ojdbc8.jar" ProyectoBD/*.java
 ```
 
 ### Ejecutar
 
 **Windows:**
 ```bash
-java -cp "app/lib/ojdbc8.jar;app" ConexionRestaurante
+cd app/src
+java -cp "../lib/ojdbc8.jar;." ProyectoBD.ConexionRestaurante
 ```
 
 **Linux/Mac:**
 ```bash
-java -cp "app/lib/ojdbc8.jar:app" ConexionRestaurante
+cd app/src
+java -cp "../lib/ojdbc8.jar:." ProyectoBD.ConexionRestaurante
 ```
 
-## Capturas de Pantalla
+## Características Avanzadas Implementadas
 
-### Constraints e Índices Implementados
+### Procedimientos Almacenados
+
+Permiten ejecutar operaciones CRUD de forma segura y centralizada en la base de datos:
+
+#### SP_INSERTAR_CLIENTE
+![Procedimiento Insertar](docs/screenshots/procedimiento_insertar.png)
+
+#### SP_ACTUALIZAR_CLIENTE
+![Procedimiento Actualizar](docs/screenshots/procedimiento_actualizar.png)
+
+#### SP_ELIMINAR_CLIENTE
+![Procedimiento Eliminar](docs/screenshots/procedimiento_eliminar.png)
+
+### Triggers (Disparadores)
+
+Sistema de auditoría automática que registra todas las operaciones sobre la tabla CLIENTE:
+
+#### Tabla de Historial
+![Tabla Historial](docs/screenshots/trigger_tabla_historial.png)
+
+#### Secuencia Automática
+![Secuencia](docs/screenshots/trigger_secuencia.png)
+
+#### Trigger Principal
+![Trigger Principal](docs/screenshots/trigger_principal.png)
+
+### Vistas
+
+Consultas complejas simplificadas para reportes y análisis:
+
+#### Vista de Pedidos Completos
+![Vista Pedidos](docs/screenshots/vista_pedidos_completos.png)
+
+#### Vista de Detalle de Pedidos
+![Vista Detalle](docs/screenshots/vista_detalle_pedidos.png)
+
+## Implementación en Java
+
+### Código ClienteDAO con CallableStatement
+
+![ClienteDAO Parte 1](docs/screenshots/java_clientedao_parte1.png)
+![ClienteDAO Parte 2](docs/screenshots/java_clientedao_parte2.png)
+
+### Menú Principal Actualizado
+
+![Menú Principal](docs/screenshots/java_menu_principal.png)
+
+## Demostración de Funcionalidades
+
+### Constraints e Índices
 
 ![Constraints e Índices 1](docs/screenshots/constraints_indices.png)
 ![Constraints e Índices 2](docs/screenshots/constraints_indices2.png)
 
-### Código Java Implementado
+### Código Java Original (Entrega 2)
 
-#### Clase Conexion.java
 ![Código Conexión](docs/screenshots/codigo_conexion_clientedao.png)
-
-#### Clase ClienteDAO.java
 ![Código ClienteDAO](docs/screenshots/codigo_conexion_clientedao2.png)
-
-#### Clase ConexionRestaurante.java (Menú Principal)
 ![Código Principal 1](docs/screenshots/codigo_conexion_restaurante.png)
 ![Código Principal 2](docs/screenshots/codigo_conexion_restaurante2.png)
 
-### Demostración de Operaciones CRUD
+### Operaciones CRUD
 
 #### Agregar Clientes
 
-![Agregar Cliente - Michael Fernandez](docs/screenshots/agregar_clientes.png)
-![Agregar Cliente - Carlos Andia](docs/screenshots/agregar_clientes2.png)
-![Agregar Cliente - John Malpartida](docs/screenshots/agregar_clientes3.png)
+![Agregar Cliente 1](docs/screenshots/agregar_clientes.png)
+![Agregar Cliente 2](docs/screenshots/agregar_clientes2.png)
+![Agregar Cliente 3](docs/screenshots/agregar_clientes3.png)
 
 #### Visualizar Clientes
 
@@ -177,13 +227,23 @@ java -cp "app/lib/ojdbc8.jar:app" ConexionRestaurante
 
 #### Modificar Cliente
 
-![Modificar Cliente (John Malpartida → Lorena Gonzales)](docs/screenshots/modificar_cliente.png)
+![Modificar Cliente](docs/screenshots/modificar_cliente.png)
 ![Verificación de Modificación](docs/screenshots/modificar_cliente2.png)
 
 #### Eliminar Cliente
 
-![Eliminar Cliente (código 6)](docs/screenshots/eliminar_cliente.png)
+![Eliminar Cliente](docs/screenshots/eliminar_cliente.png)
 ![Verificación de Eliminación](docs/screenshots/eliminar_cliente2.png)
+
+### Nuevas Funcionalidades (Entrega 3)
+
+#### Historial de Clientes (Trigger)
+
+![Historial de Clientes](docs/screenshots/visualizar_clientes_java_bd2.png)
+
+#### Vista de Pedidos Completos
+
+![Vista Pedidos Completos](docs/screenshots/vista_pedidos_completos.png)
 
 ### Conexión SQL*Plus
 
@@ -229,19 +289,32 @@ lsnrctl start
 - Constraints de validación (CHECK)
 - Constraints de unicidad (UNIQUE)
 - Índices para optimización de consultas
+- **Procedimientos almacenados** para operaciones CRUD
+- **Triggers** para auditoría automática
+- **Vistas** para consultas complejas
 - Inserción de datos de prueba
 
 ### Aplicación Java
 - Arquitectura en capas (Conexión, DAO, Main)
 - Conexión JDBC con Oracle
+- **Invocación de procedimientos almacenados** mediante CallableStatement
 - Operaciones CRUD completas:
-  - **Create**: Agregar nuevos clientes
+  - **Create**: Agregar nuevos clientes (mediante procedimiento)
   - **Read**: Listar todos los clientes
-  - **Update**: Modificar nombre de cliente
-  - **Delete**: Eliminar cliente por código
-- Menú interactivo de consola
+  - **Update**: Modificar nombre de cliente (mediante procedimiento)
+  - **Delete**: Eliminar cliente por código (mediante procedimiento)
+- **Consulta de historial** de cambios (tabla generada por trigger)
+- **Consulta de vistas** para reportes
+- Menú interactivo de consola con 7 opciones
 - Manejo de excepciones
-- Prepared Statements para seguridad
+- Prepared Statements y Callable Statements para seguridad
+
+## Conclusiones
+
+- **Procedimientos Almacenados**: Centralizan la lógica de negocio en la base de datos, mejorando seguridad y mantenibilidad
+- **Triggers**: Permiten auditoría automática sin intervención manual, facilitando trazabilidad completa
+- **Vistas**: Simplifican consultas complejas y mejoran la organización de reportes
+- **Arquitectura en capas**: Separa responsabilidades y facilita el mantenimiento del código
 
 ## Coordinador del Repositorio
 
